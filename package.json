@@ -1,0 +1,10 @@
+{
+  "name": "tangobot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Anis Safine Laget <anis@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.16"
+  }
+}
