@@ -6,5 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "phantomjs-prebuilt": "^2.1.16"
+  },
+  "scripts": {
+    "start": "phantomjs index.js"
   }
 }
