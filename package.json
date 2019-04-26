@@ -8,6 +8,6 @@
     "phantomjs-prebuilt": "^2.1.16"
   },
   "scripts": {
-    "start": "phantomjs index.js"
+    "start": "phantomjs --web-security=no index.js"
   }
 }

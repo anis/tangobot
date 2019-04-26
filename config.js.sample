@@ -1,0 +1,6 @@
+module.exports = {
+    credentials: {
+        username: 'botuser',
+        password: 'botpassword'
+    }
+};
