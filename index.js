@@ -27,7 +27,7 @@ function waitForElement(selector, callback, delay, trials) {
 
 var DEFAULT_DELAY = 500;
 var DEFAULT_TRIALS = 20;
-var REQUEST_DELAY = 20 * 1000;
+var REQUEST_DELAY = 10 * 1000;
 
 /**
  * 
