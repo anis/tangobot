@@ -27,6 +27,7 @@ function waitForElement(selector, callback, delay, trials) {
 
 var DEFAULT_DELAY = 500;
 var DEFAULT_TRIALS = 20;
+var REQUEST_DELAY = 20 * 1000;
 
 /**
  * 
@@ -415,12 +416,17 @@ var requesters = {
         sendAGiphy('sticker', user, search);
     }
 };
+var lastRequests = {};
 
 function respondToRequests() {
     var requests = findRequests();
+    var now = Date.now();
     for (var user in requests) {
         if (requests.hasOwnProperty(user)) {
-            requesters[requests[user].type](user, requests[user].content);
+            if (!lastRequests[user] || (now - lastRequests[user]) >= REQUEST_DELAY) {
+                requesters[requests[user].type](user, requests[user].content);
+                lastRequests[users] = now;
+            }
         }
     }
 
