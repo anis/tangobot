@@ -310,9 +310,9 @@ function login__waitForResult(callback) {
     }, 1000);
 }
 
-function getAGif(search, callback) {
+function getAGiphy(imgType, search, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.giphy.com/v1/gifs/random?api_key=yW6kdESjPKWJZUk09MtEMz4iBdPMY4eK&tag=' + encodeURIComponent(search) + '&rating=R', true);
+    xhr.open('GET', 'https://api.giphy.com/v1/' + imgType + 's/random?api_key=yW6kdESjPKWJZUk09MtEMz4iBdPMY4eK&tag=' + encodeURIComponent(search) + '&rating=R', true);
     xhr.onload = function () {
         try {
             var response = JSON.parse(this.response);
@@ -337,7 +337,7 @@ function getAGif(search, callback) {
     xhr.send();
 }
 
-function findGifRequests() {
+function findRequests() {
     return page.evaluate(function () {
         var elements = document.querySelectorAll(
             '#OM > .msg > .msg-fg:not(.clear)'
@@ -353,9 +353,12 @@ function findGifRequests() {
             );
 
             for (var j = 0; j < msgs.length; j += 1) {
-                var result = msgs[j].textContent.match(/^(.+): \/gif ([a-zA-Z]+)$/i);
+                var result = msgs[j].textContent.match(/^(.+): \/(gif|sticker) ([a-zA-Z ]+)$/i);
                 if (result !== null) {
-                    requests[result[1]] = result[2];
+                    requests[result[1]] = {
+                        type: result[2],
+                        content: result[3]
+                    };
                     break;
                 }
             }
@@ -382,9 +385,9 @@ function buildASorryMessage() {
     return msg.join('');
 }
 
-function sendAGif(user, search) {
-    getAGif(search, function (gifSrc) {
-        if (gifSrc === null) {
+function sendAGiphy(imgType, user, search) {
+    getAGiphy(imgType, search, function (imgSrc) {
+        if (imgSrc === null) {
             type(
                 '@' + user + ' ' + buildASorryMessage(),
                 '#input-field',
@@ -394,7 +397,7 @@ function sendAGif(user, search) {
             );
         } else {
             type(
-                '@' + user + ' ' + gifSrc,
+                '@' + user + ' ' + imgSrc,
                 '#input-field',
                 true,
                 function () {},
@@ -404,15 +407,24 @@ function sendAGif(user, search) {
     });
 }
 
-function respondToGifRequests() {
-    var requests = findGifRequests();
+var requesters = {
+    gif: function (user, search) {
+        sendAGiphy('gif', user, search);
+    },
+    sticker: function (user, search) {
+        sendAGiphy('sticker', user, search);
+    }
+};
+
+function respondToRequests() {
+    var requests = findRequests();
     for (var user in requests) {
         if (requests.hasOwnProperty(user)) {
-            sendAGif(user, requests[user]);
+            requesters[requests[user].type](user, requests[user].content);
         }
     }
 
-    window.requestAnimationFrame(respondToGifRequests);
+    window.requestAnimationFrame(respondToRequests);
 }
 
 var page = require('webpage').create();
@@ -427,8 +439,8 @@ page.open('https://eloriginale.chatango.com', function (status) {
 
         login(config.credentials.username, config.credentials.password, function (success) {
             if (success === true) {
-                findGifRequests(); // clear initial requests
-                window.requestAnimationFrame(respondToGifRequests);
+                findRequests(); // clear initial requests
+                window.requestAnimationFrame(respondToRequests);
             } else {
                 phantom.exit();
             }
