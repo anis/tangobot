@@ -5,9 +5,13 @@
   "author": "Anis Safine Laget <anis@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "forever": "^1.0.0",
     "phantomjs-prebuilt": "^2.1.16"
   },
   "scripts": {
-    "start": "phantomjs --web-security=no index.js"
+    "dev": "phantomjs --web-security=no index.js",
+    "prod": "forever start -c \"./node_modules/.bin/phantomjs --web-security=no\" -o ./logs/out -e ./logs/err index.js",
+    "stop": "forever stop index.js",
+    "logs": "tail -f ./logs/out"
   }
 }

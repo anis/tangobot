@@ -1,3 +1,5 @@
 yarn-error.log
 node_modules
 config.js
+logs/*
+!logs/.gitempty
