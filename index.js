@@ -312,7 +312,7 @@ function login__waitForResult(callback) {
 
 function getAGif(search, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.giphy.com/v1/gifs/random?api_key=yW6kdESjPKWJZUk09MtEMz4iBdPMY4eK&tag=' + encodeURIComponent(search) + '&rating=R');
+    xhr.open('GET', 'https://api.giphy.com/v1/gifs/random?api_key=yW6kdESjPKWJZUk09MtEMz4iBdPMY4eK&tag=' + encodeURIComponent(search) + '&rating=R', true);
     xhr.onload = function () {
         try {
             var response = JSON.parse(this.response);
