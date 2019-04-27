@@ -119,6 +119,69 @@ module.exports = function (config) {
         },
 
         /**
+         * Waits for a specific style to be set onto a DOM element
+         * 
+         * @param {string}   property          Name of the expected property
+         * @param {string}   value             Name of the expected value
+         * @param {string}   selector          The selector of the element
+         * @param {Function} [successCallback] Callback executed in case of success
+         * @param {Function} [failureCallback] Callback executed in case of failure
+         * @param {number}   [delay]           The delay, in milliseconds, before a new trial
+         * @param {number}   [trials]          The number of allowed trials before failing
+         * 
+         * @returns {undefined}
+         */
+        waitForStyle: function waitForStyle(property, value, selector, successCallback, failureCallback, delay, trials) {
+            console.log('Waiting for a text in ' + selector);
+            if (delay === undefined) {
+                delay = DEFAULT_DELAY;
+            }
+
+            if (trials === undefined) {
+                trials = DEFAULT_NUMBER_OF_TRIALS;
+            }
+
+            if (trials <= 0) {
+                console.log('Failed');
+
+                if (failureCallback) {
+                    failureCallback();
+                }
+
+                return;
+            }
+
+            var response;
+            try {
+                response = page.evaluate(function (property, value, selector) {
+                    var el = document.querySelector(selector);
+                    if (!el) {
+                        return 'could not find element';
+                    }
+
+                    return el.style && el.style[property] === value;
+                }, property, value, selector);
+            } catch (error) {
+                console.log(error);
+                response = false;
+            }
+
+            if (response === true) {
+                console.log('Succeeded');
+
+                if (successCallback) {
+                    successCallback();
+                }
+
+                return;
+            } else {
+                console.log('Failed attempt: ' + response);
+            }
+
+            setTimeout(waitForStyle.bind(this, property, value, selector, successCallback, failureCallback, delay, trials - 1), delay);
+        },
+
+        /**
          * Clicks on a DOM element
          * 
          * @param {string}   selector          Selector of the element to be clicked
