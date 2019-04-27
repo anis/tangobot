@@ -353,16 +353,22 @@ page.open('https://eloriginale.chatango.com', function (status) {
         return;
     }
 
-    browserHelper.waitForElement('#group_table', function () {
-        page.switchToFrame(1);
+    browserHelper.waitForElement(
+        '#group_table',
+        function () {
+            page.switchToFrame(1);
 
-        login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
-            if (success === true) {
-                findRequests(); // clear initial requests
-                window.requestAnimationFrame(respondToRequests);
-            } else {
-                phantom.exit();
-            }
-        });
-    });
+            login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
+                if (success === true) {
+                    findRequests(); // clear initial requests
+                    window.requestAnimationFrame(respondToRequests);
+                } else {
+                    phantom.exit();
+                }
+            });
+        },
+        function () {
+            phantom.exit();
+        }
+    );
 });

@@ -6,14 +6,15 @@ module.exports = function (config) {
         /**
          * Waits for a specific element to appear inside the DOM tree
          * 
-         * @param {string}   selector The selector of the expected element
-         * @param {Function} callback Callback executed at either success or failure
-         * @param {number}   [delay]  The delay, in milliseconds, before a new trial
-         * @param {number}   [trials] The number of allowed trials before failing
+         * @param {string}   selector          The selector of the expected element
+         * @param {Function} [successCallback] Callback executed in case of success
+         * @param {Function} [failureCallback] Callback executed in case of failure
+         * @param {number}   [delay]           The delay, in milliseconds, before a new trial
+         * @param {number}   [trials]          The number of allowed trials before failing
          * 
          * @returns {undefined}
          */
-        waitForElement: function waitForElement(selector, callback, delay, trials) {
+        waitForElement: function waitForElement(selector, successCallback, failureCallback, delay, trials) {
             console.log('Looking for ' + selector);
             if (delay === undefined) {
                 delay = DEFAULT_DELAY;
@@ -25,7 +26,11 @@ module.exports = function (config) {
 
             if (trials <= 0) {
                 console.log('Failed');
-                callback(null);
+
+                if (failureCallback) {
+                    failureCallback();
+                }
+
                 return;
             }
 
@@ -41,9 +46,13 @@ module.exports = function (config) {
         
             if (element) {
                 console.log('Succeeded');
-                callback(element);
+
+                if (successCallback) {
+                    successCallback(element);
+                }
             } else {
-                setTimeout(waitForElement.bind(this, selector, callback, delay, trials - 1), delay);
+                console.log('Failed attempt');
+                setTimeout(waitForElement.bind(this, selector, successCallback, failureCallback, delay, trials - 1), delay);
             }
         },
 
