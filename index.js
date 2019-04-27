@@ -389,7 +389,7 @@ function buildASorryMessage() {
 var oderIsAccepted = 0;
 function sendAGiphy(imgType, user, search) {
     if (user === 'oderuntrubaiyat') {
-        if (search.split(' ').slice(-2).join(' ') !== 'svp mme annick') {
+        if (search.split(' ').slice(-3).join(' ') !== 'svp mme annick') {
             if (search.split(' ').slice(-1)[0] !== 'svp') {
                 type(
                     '@' + user + ' ça te dérangerait de dire "svp" ? ...',
@@ -442,6 +442,10 @@ function sendAGiphy(imgType, user, search) {
             );
             oderIsAccepted = 2;
         }
+
+        var splitSearch = search.split(' ');
+        splitSearch.splice(-3, 3);
+        search = splitSearch.join(' ');
     }
 
     getAGiphy(imgType, search, function (imgSrc) {
