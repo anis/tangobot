@@ -4,70 +4,6 @@ var browserHelper = require('./helpers/browserHelper');
 /**
  * 
  */
-function type(str, selector, submit, successCallback, failureCallback, delay, trials) {
-    console.log('Typing in ' + selector);
-    if (delay === undefined) {
-        delay = config.browser.delayBeforeRetry;
-    }
-
-    if (trials === undefined) {
-        trials = config.browser.numberOfTrialsBeforeFailure;
-    }
-
-    if (trials <= 0) {
-        console.log('Failed');
-        failureCallback();
-        return;
-    }
-
-    var response;
-    try {
-        response = page.evaluate(function (str, selector, submit) {
-            var el = document.querySelector(selector);
-            if (!el) {
-                return 'could not find element';
-            }
-
-            if (typeof el.value === 'string') {
-                el.value = str;
-                el.focus();
-            } else {
-                el.innerHTML = str;
-            }
-
-            if (submit === true) {
-                var eventNames = ['keydown', 'keypress'];
-                for (var i = 0; i < eventNames.length; i += 1) {
-                    var event = document.createEvent('Events');
-                    event.initEvent(eventNames[i], true, true);
-                    event.keyCode = 13;
-                    event.which = 13;
-                    
-                    el.dispatchEvent(event);
-                }
-            }
-
-            return true;
-        }, str, selector, submit);
-    } catch (error) {
-        console.log(error);
-        response = false;
-    }
-
-    if (response === true) {
-        console.log('Succeeded');
-        successCallback();
-        return;
-    } else {
-        console.log('Failed attempt: ' + response);
-    }
-
-    setTimeout(type.bind(this, str, selector, submit, successCallback, failureCallback, delay, trials - 1), delay);
-}
-
-/**
- * 
- */
 function waitForText(str, selector, successCallback, failureCallback, delay, trials) {
     console.log('Waiting for a text in ' + selector);
     if (delay === undefined) {
@@ -178,7 +114,7 @@ function login__showForm(name, password, callback) {
 
 function login__typeName(name, password, callback) {
     setTimeout(function () {
-        type(
+        browserHelper.type(
             name,
             '#full-username-input',
             false,
@@ -194,7 +130,7 @@ function login__typeName(name, password, callback) {
 
 function login__typePassword(password, callback) {
     setTimeout(function () {
-        type(
+        browserHelper.type(
             password,
             '#full-password-input',
             true,
@@ -302,7 +238,7 @@ function buildASorryMessage() {
 function sendAGiphy(imgType, user, search) {
     getAGiphy(imgType, search, function (imgSrc) {
         if (imgSrc === null) {
-            type(
+            browserHelper.type(
                 '@' + user + ' ' + buildASorryMessage(),
                 '#input-field',
                 true,
@@ -310,7 +246,7 @@ function sendAGiphy(imgType, user, search) {
                 function () {}
             );
         } else {
-            type(
+            browserHelper.type(
                 '@' + user + ' ' + imgSrc,
                 '#input-field',
                 true,
