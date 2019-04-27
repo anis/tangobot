@@ -467,14 +467,16 @@ function sendAGiphy(imgType, user, search) {
             );
         }
     });
+
+    return true;
 }
 
 var requesters = {
     gif: function (user, search) {
-        sendAGiphy('gif', user, search);
+        return sendAGiphy('gif', user, search);
     },
     sticker: function (user, search) {
-        sendAGiphy('sticker', user, search);
+        return sendAGiphy('sticker', user, search);
     }
 };
 var lastRequests = {};
@@ -485,8 +487,9 @@ function respondToRequests() {
     for (var user in requests) {
         if (requests.hasOwnProperty(user)) {
             if (!lastRequests[user] || (now - lastRequests[user]) >= REQUEST_DELAY) {
-                requesters[requests[user].type](user, requests[user].content);
-                lastRequests[user] = now;
+                if (requesters[requests[user].type](user, requests[user].content) === true) {
+                    lastRequests[user] = now;
+                }
             }
         }
     }
