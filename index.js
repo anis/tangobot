@@ -425,7 +425,7 @@ function respondToRequests() {
         if (requests.hasOwnProperty(user)) {
             if (!lastRequests[user] || (now - lastRequests[user]) >= REQUEST_DELAY) {
                 requesters[requests[user].type](user, requests[user].content);
-                lastRequests[users] = now;
+                lastRequests[user] = now;
             }
         }
     }
