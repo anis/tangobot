@@ -63,9 +63,7 @@ module.exports = function (browserHelper) {
 
     return {
         login: function login(name, password, callback) {
-            setTimeout(function () {
-                login__showForm(name, password, callback);
-            }, 5000);
+            login__showForm(name, password, callback);
         }
     };
 };

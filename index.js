@@ -136,14 +136,16 @@ page.open('https://eloriginale.chatango.com', function (status) {
         function () {
             page.switchToFrame(1);
 
-            chatangoHelper.login.login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
-                if (success === true) {
-                    findRequests(); // clear initial requests
-                    window.requestAnimationFrame(respondToRequests);
-                } else {
-                    phantom.exit();
-                }
-            });
+            setTimeout(function () {
+                chatangoHelper.login.login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
+                    if (success === true) {
+                        findRequests(); // clear initial requests
+                        window.requestAnimationFrame(respondToRequests);
+                    } else {
+                        phantom.exit();
+                    }
+                });
+            }, 5000);
         },
         function () {
             phantom.exit();
