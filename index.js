@@ -386,68 +386,7 @@ function buildASorryMessage() {
     return msg.join('');
 }
 
-var oderIsAccepted = 0;
 function sendAGiphy(imgType, user, search) {
-    if (user === 'oderuntrubaiyat') {
-        if (search.split(' ').slice(-3).join(' ') !== 'svp mme annick') {
-            if (search.split(' ').slice(-1)[0] !== 'svp') {
-                type(
-                    '@' + user + ' ça te dérangerait de dire "svp" ? ...',
-                    '#input-field',
-                    true,
-                    function () {},
-                    function () {}
-                );
-                return;
-            }
-
-            type(
-                '@' + user + ' d\'ailleurs, pour toi, c\'est "svp mme annick"',
-                '#input-field',
-                true,
-                function () {},
-                function () {}
-            );
-
-            type(
-                'un peu de respect, tout de même',
-                '#input-field',
-                true,
-                function () {},
-                function () {}
-            );
-
-            return;
-        }
-
-        if (oderIsAccepted === 0) {
-            type(
-                '@' + user + ' en vrai ça m\'a tué ton manque de respect, gratte toi pour ton ' + imgType,
-                '#input-field',
-                true,
-                function () {},
-                function () {}
-            );
-            oderIsAccepted = 1;
-            return;
-        }
-
-        if (oderIsAccepted === 1) {
-            type(
-                '@' + user + ' allez, c\'est bon, calme toi, le voilà ton ' + imgType + '...',
-                '#input-field',
-                true,
-                function () {},
-                function () {}
-            );
-            oderIsAccepted = 2;
-        }
-
-        var splitSearch = search.split(' ');
-        splitSearch.splice(-3, 3);
-        search = splitSearch.join(' ');
-    }
-
     getAGiphy(imgType, search, function (imgSrc) {
         if (imgSrc === null) {
             type(
@@ -467,8 +406,6 @@ function sendAGiphy(imgType, user, search) {
             );
         }
     });
-
-    return true;
 }
 
 var requesters = {
@@ -487,9 +424,8 @@ function respondToRequests() {
     for (var user in requests) {
         if (requests.hasOwnProperty(user)) {
             if (!lastRequests[user] || (now - lastRequests[user]) >= REQUEST_DELAY) {
-                if (requesters[requests[user].type](user, requests[user].content) === true) {
-                    lastRequests[user] = now;
-                }
+                requesters[requests[user].type](user, requests[user].content);
+                lastRequests[user] = now;
             }
         }
     }
