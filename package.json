@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "phantomjs --web-security=no index.js",
     "prod": "forever start -c \"./node_modules/.bin/phantomjs --web-security=no\" -o ./logs/out -e ./logs/err index.js",
-    "stop": "forever stop index.js",
+    "stop": "forever stop index.js && ps -ef | grep phantomjs | awk '{print $2}' | xargs sudo kill -9",
     "logs": "tail -f ./logs/out"
   }
 }
