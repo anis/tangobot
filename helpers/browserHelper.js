@@ -41,16 +41,24 @@ module.exports = function (config) {
         },
 
         /**
+         * Clicks on a DOM element
          * 
+         * @param {string}   selector        Selector of the element to be clicked
+         * @param {Function} successCallback Callback executed in case of success
+         * @param {Function} failureCallback Callback executed in case of failure
+         * @param {number}   [delay]         The delay, in milliseconds, before a new trial
+         * @param {number}   [trials]        The number of allowed trials before failing
+         * 
+         * @returns {undefined}
          */
         click: function click(selector, successCallback, failureCallback, delay, trials) {
             console.log('Clicking on ' + selector);
             if (delay === undefined) {
-                delay = config.browser.delayBeforeRetry;
+                delay = DEFAULT_DELAY;
             }
 
             if (trials === undefined) {
-                trials = config.browser.numberOfTrialsBeforeFailure;
+                trials = DEFAULT_NUMBER_OF_TRIALS;
             }
 
             if (trials <= 0) {
