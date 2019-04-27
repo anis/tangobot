@@ -1,7 +1,7 @@
 {
   "name": "tangobot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "author": "Anis Safine Laget <anis@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
@@ -9,9 +9,9 @@
     "phantomjs-prebuilt": "^2.1.16"
   },
   "scripts": {
-    "dev": "phantomjs --web-security=no index.js",
-    "prod": "forever start -c \"./node_modules/.bin/phantomjs --web-security=no\" -o ./logs/out -e ./logs/err index.js",
-    "stop": "forever stop index.js && ps -ef | grep phantomjs | awk '{print $2}' | xargs sudo kill -9",
+    "dev": "phantomjs --web-security=no src/index.js",
+    "prod": "forever start -c \"./node_modules/.bin/phantomjs --web-security=no\" -o ./logs/out -e ./logs/err src/index.js",
+    "stop": "forever stop src/index.js && ps -ef | grep phantomjs | awk '{print $2}' | xargs sudo kill -9",
     "logs": "tail -f ./logs/out"
   }
 }
