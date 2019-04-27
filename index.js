@@ -1,73 +1,6 @@
 var config = require('./config');
-var browserHelper = require('./helpers/browserHelper');
-
-function login(name, password, callback) {
-    setTimeout(function () {
-        login__showForm(name, password, callback);
-    }, 5000);
-}
-
-function login__showForm(name, password, callback) {
-    setTimeout(function () {
-        browserHelper.click(
-            '#LOGIN > div',
-            function () {
-                login__typeName(name, password, callback);
-            },
-            function () {
-                callback(false);
-            }
-        );
-    }, 1000);
-}
-
-function login__typeName(name, password, callback) {
-    setTimeout(function () {
-        browserHelper.type(
-            name,
-            '#full-username-input',
-            false,
-            function () {
-                login__typePassword(password, callback);
-            },
-            function () {
-                callback(false);
-            }
-        );
-    }, 1000);
-}
-
-function login__typePassword(password, callback) {
-    setTimeout(function () {
-        browserHelper.type(
-            password,
-            '#full-password-input',
-            true,
-            function () {
-                login__waitForResult(callback);
-            },
-            function () {
-                callback(false);
-            }
-        );
-    }, 1000);
-}
-
-function login__waitForResult(callback) {
-    setTimeout(function () {
-        browserHelper.waitForStyle(
-            'display',
-            'none',
-            '#LOGIN',
-            function () {
-                callback(true)
-            },
-            function () {
-                callback(false);
-            }
-        );
-    }, 1000);
-}
+var browserHelper = require('./helpers/browserHelper')(config);
+var chatangoHelper = require('./helpers/chatangoHelper')(browserHelper);
 
 function getAGiphy(imgType, search, callback) {
     var xhr = new XMLHttpRequest();
@@ -203,7 +136,7 @@ page.open('https://eloriginale.chatango.com', function (status) {
         function () {
             page.switchToFrame(1);
 
-            login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
+            chatangoHelper.login.login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
                 if (success === true) {
                     findRequests(); // clear initial requests
                     window.requestAnimationFrame(respondToRequests);
