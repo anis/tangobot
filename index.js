@@ -317,8 +317,8 @@ function getAGiphy(imgType, search, callback) {
     xhr.onload = function () {
         try {
             var response = JSON.parse(this.response);
-            if (response.data && response.data.images && response.data.images.fixed_width) {
-                callback(response.data.images.fixed_width.url);
+            if (response.data && response.data.images && response.data.images.original) {
+                callback(response.data.images.original.url);
             } else {
                 callback(null);
             }
