@@ -125,30 +125,15 @@ function respondToRequests() {
 }
 
 var page = require('webpage').create();
-page.open('https://eloriginale.chatango.com', function (status) {
-    if (status !== 'success') {
+chatangoHelper.openAs(
+    page,
+    'eloriginale',
+    config.bot.credentials,
+    function () {
+        findRequests(); // clear initial requests
+        window.requestAnimationFrame(respondToRequests);
+    },
+    function () {
         phantom.exit();
-        return;
     }
-
-    browserHelper.waitForElement(
-        '#group_table',
-        function () {
-            page.switchToFrame(1);
-
-            setTimeout(function () {
-                chatangoHelper.login.login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
-                    if (success === true) {
-                        findRequests(); // clear initial requests
-                        window.requestAnimationFrame(respondToRequests);
-                    } else {
-                        phantom.exit();
-                    }
-                });
-            }, 5000);
-        },
-        function () {
-            phantom.exit();
-        }
-    );
-});
+);

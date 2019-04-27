@@ -1,69 +1,59 @@
 module.exports = function (browserHelper) {
-    function login__showForm(name, password, callback) {
+    function login__showForm(name, password, successCallback, failureCallback) {
         setTimeout(function () {
             browserHelper.click(
                 '#LOGIN > div',
                 function () {
-                    login__typeName(name, password, callback);
+                    login__typeName(name, password, successCallback, failureCallback);
                 },
-                function () {
-                    callback(false);
-                }
+                failureCallback
             );
         }, 1000);
     }
 
-    function login__typeName(name, password, callback) {
+    function login__typeName(name, password, successCallback, failureCallback) {
         setTimeout(function () {
             browserHelper.type(
                 name,
                 '#full-username-input',
                 false,
                 function () {
-                    login__typePassword(password, callback);
+                    login__typePassword(password, successCallback, failureCallback);
                 },
-                function () {
-                    callback(false);
-                }
+                failureCallback
             );
         }, 1000);
     }
 
-    function login__typePassword(password, callback) {
+    function login__typePassword(password, successCallback, failureCallback) {
         setTimeout(function () {
             browserHelper.type(
                 password,
                 '#full-password-input',
                 true,
                 function () {
-                    login__waitForResult(callback);
+                    login__waitForResult(successCallback, failureCallback);
                 },
-                function () {
-                    callback(false);
-                }
+                failureCallback
             );
         }, 1000);
     }
 
-    function login__waitForResult(callback) {
+    function login__waitForResult(successCallback, failureCallback) {
         setTimeout(function () {
             browserHelper.waitForStyle(
                 'display',
                 'none',
                 '#LOGIN',
-                function () {
-                    callback(true)
-                },
-                function () {
-                    callback(false);
-                }
+                successCallback,
+                failureCallback
             );
         }, 1000);
     }
 
     return {
-        login: function login(name, password, callback) {
-            login__showForm(name, password, callback);
+        login: function login(name, password, successCallback, failureCallback) {
+            login__showForm(name, password, successCallback, failureCallback);
         }
     };
 };
