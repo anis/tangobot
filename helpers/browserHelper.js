@@ -156,7 +156,11 @@ module.exports = function (config) {
 
             if (trials <= 0) {
                 console.log('Failed');
-                failureCallback();
+
+                if (failureCallback) {
+                    failureCallback();
+                }
+
                 return;
             }
 
@@ -196,7 +200,11 @@ module.exports = function (config) {
 
             if (response === true) {
                 console.log('Succeeded');
-                successCallback();
+
+                if (successCallback) {
+                    successCallback();
+                }
+
                 return;
             } else {
                 console.log('Failed attempt: ' + response);
