@@ -4,51 +4,6 @@ var browserHelper = require('./helpers/browserHelper');
 /**
  * 
  */
-function waitForText(str, selector, successCallback, failureCallback, delay, trials) {
-    console.log('Waiting for a text in ' + selector);
-    if (delay === undefined) {
-        delay = config.browser.delayBeforeRetry;
-    }
-
-    if (trials === undefined) {
-        trials = config.browser.numberOfTrialsBeforeFailure;
-    }
-
-    if (trials <= 0) {
-        console.log('Failed');
-        failureCallback();
-        return;
-    }
-
-    var response;
-    try {
-        response = page.evaluate(function (str, selector) {
-            var el = document.querySelector(selector);
-            if (!el) {
-                return 'could not find element';
-            }
-
-            return el.textContent.indexOf(str) >= 0;
-        }, str, selector);
-    } catch (error) {
-        console.log(error);
-        response = false;
-    }
-
-    if (response === true) {
-        console.log('Succeeded');
-        successCallback();
-        return;
-    } else {
-        console.log('Failed attempt: ' + response);
-    }
-
-    setTimeout(waitForText.bind(this, str, selector, successCallback, failureCallback, delay, trials - 1), delay);
-}
-
-/**
- * 
- */
 function waitForStyle(property, value, selector, successCallback, failureCallback, delay, trials) {
     console.log('Waiting for a text in ' + selector);
     if (delay === undefined) {
