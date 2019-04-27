@@ -1,6 +1,13 @@
 module.exports = {
-    credentials: {
-        username: 'botuser',
-        password: 'botpassword'
+    bot: {
+        credentials: {
+            username: 'botuser',
+            password: 'botpassword'
+        },
+        minimumDelayBetweenRequests: 10000 // in milliseconds
+    },
+    browser: {
+        delayBeforeRetry: 500, // in milliseconds
+        numberOfTrialsBeforeFailure: 20
     }
 };

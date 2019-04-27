@@ -1,33 +1,5 @@
 var config = require('./config');
-
-function waitForElement(selector, callback, delay, trials) {
-    console.log('Looking for ' + selector);
-    if (delay === undefined) {
-        delay = 500;
-    }
-    if (trials === undefined) {
-        trials = 20;
-    }
-
-    if (trials <= 0) {
-        callback(null);
-        return;
-    }
-
-    var element = page.evaluate(function (selector) {
-        return document.querySelector(selector);
-    }, selector);
-
-    if (element) {
-        callback(element);
-    } else {
-        setTimeout(waitForElement.bind(this, selector, callback, delay, trials - 1), delay);
-    }
-}
-
-var DEFAULT_DELAY = 500;
-var DEFAULT_TRIALS = 20;
-var REQUEST_DELAY = 10 * 1000;
+var browserHelper = require('./helpers/browserHelper');
 
 /**
  * 
@@ -35,11 +7,11 @@ var REQUEST_DELAY = 10 * 1000;
 function click(selector, successCallback, failureCallback, delay, trials) {
     console.log('Clicking on ' + selector);
     if (delay === undefined) {
-        delay = DEFAULT_DELAY;
+        delay = config.browser.delayBeforeRetry;
     }
 
     if (trials === undefined) {
-        trials = DEFAULT_TRIALS;
+        trials = config.browser.numberOfTrialsBeforeFailure;
     }
 
     if (trials <= 0) {
@@ -94,11 +66,11 @@ function click(selector, successCallback, failureCallback, delay, trials) {
 function type(str, selector, submit, successCallback, failureCallback, delay, trials) {
     console.log('Typing in ' + selector);
     if (delay === undefined) {
-        delay = DEFAULT_DELAY;
+        delay = config.browser.delayBeforeRetry;
     }
 
     if (trials === undefined) {
-        trials = DEFAULT_TRIALS;
+        trials = config.browser.numberOfTrialsBeforeFailure;
     }
 
     if (trials <= 0) {
@@ -158,11 +130,11 @@ function type(str, selector, submit, successCallback, failureCallback, delay, tr
 function waitForText(str, selector, successCallback, failureCallback, delay, trials) {
     console.log('Waiting for a text in ' + selector);
     if (delay === undefined) {
-        delay = DEFAULT_DELAY;
+        delay = config.browser.delayBeforeRetry;
     }
 
     if (trials === undefined) {
-        trials = DEFAULT_TRIALS;
+        trials = config.browser.numberOfTrialsBeforeFailure;
     }
 
     if (trials <= 0) {
@@ -203,11 +175,11 @@ function waitForText(str, selector, successCallback, failureCallback, delay, tri
 function waitForStyle(property, value, selector, successCallback, failureCallback, delay, trials) {
     console.log('Waiting for a text in ' + selector);
     if (delay === undefined) {
-        delay = DEFAULT_DELAY;
+        delay = config.browser.delayBeforeRetry;
     }
 
     if (trials === undefined) {
-        trials = DEFAULT_TRIALS;
+        trials = config.browser.numberOfTrialsBeforeFailure;
     }
 
     if (trials <= 0) {
@@ -423,7 +395,7 @@ function respondToRequests() {
     var now = Date.now();
     for (var user in requests) {
         if (requests.hasOwnProperty(user)) {
-            if (!lastRequests[user] || (now - lastRequests[user]) >= REQUEST_DELAY) {
+            if (!lastRequests[user] || (now - lastRequests[user]) >= config.bot.minimumDelayBetweenRequests) {
                 requesters[requests[user].type](user, requests[user].content);
                 lastRequests[user] = now;
             }
@@ -440,10 +412,10 @@ page.open('https://eloriginale.chatango.com', function (status) {
         return;
     }
 
-    waitForElement('#group_table', function () {
+    browserHelper.waitForElement('#group_table', function () {
         page.switchToFrame(1);
 
-        login(config.credentials.username, config.credentials.password, function (success) {
+        login(config.bot.credentials.username, config.bot.credentials.password, function (success) {
             if (success === true) {
                 findRequests(); // clear initial requests
                 window.requestAnimationFrame(respondToRequests);
