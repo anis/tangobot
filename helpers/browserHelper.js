@@ -3,6 +3,16 @@ module.exports = function (config) {
     var DEFAULT_NUMBER_OF_TRIALS = config.browser.numberOfTrialsBeforeFailure;
 
     return {
+        /**
+         * Waits for a specific element to appear inside the DOM tree
+         * 
+         * @param {string}   selector The selector of the expected element
+         * @param {Function} callback Callback executed at either success or failure
+         * @param {number}   [delay]  The delay, in milliseconds, before a new trial
+         * @param {number}   [trials] The number of allowed trials before failing
+         * 
+         * @returns {undefined}
+         */
         waitForElement: function waitForElement(selector, callback, delay, trials) {
             console.log('Looking for ' + selector);
 
