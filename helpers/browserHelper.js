@@ -59,11 +59,11 @@ module.exports = function (config) {
         /**
          * Clicks on a DOM element
          * 
-         * @param {string}   selector        Selector of the element to be clicked
-         * @param {Function} successCallback Callback executed in case of success
-         * @param {Function} failureCallback Callback executed in case of failure
-         * @param {number}   [delay]         The delay, in milliseconds, before a new trial
-         * @param {number}   [trials]        The number of allowed trials before failing
+         * @param {string}   selector          Selector of the element to be clicked
+         * @param {Function} [successCallback] Callback executed in case of success
+         * @param {Function} [failureCallback] Callback executed in case of failure
+         * @param {number}   [delay]           The delay, in milliseconds, before a new trial
+         * @param {number}   [trials]          The number of allowed trials before failing
          * 
          * @returns {undefined}
          */
@@ -79,7 +79,11 @@ module.exports = function (config) {
 
             if (trials <= 0) {
                 console.log('Failed');
-                failureCallback();
+
+                if (failureCallback) {
+                    failureCallback();
+                }
+
                 return;
             }
 
@@ -114,7 +118,11 @@ module.exports = function (config) {
 
             if (response === true) {
                 console.log('Succeeded');
-                successCallback();
+
+                if (successCallback) {
+                    successCallback();
+                }
+
                 return;
             } else {
                 console.log('Failed attempt: ' + response);
