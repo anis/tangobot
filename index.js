@@ -4,65 +4,6 @@ var browserHelper = require('./helpers/browserHelper');
 /**
  * 
  */
-function click(selector, successCallback, failureCallback, delay, trials) {
-    console.log('Clicking on ' + selector);
-    if (delay === undefined) {
-        delay = config.browser.delayBeforeRetry;
-    }
-
-    if (trials === undefined) {
-        trials = config.browser.numberOfTrialsBeforeFailure;
-    }
-
-    if (trials <= 0) {
-        console.log('Failed');
-        failureCallback();
-        return;
-    }
-
-    var response;
-    try {
-        response = page.evaluate(function (selector) {
-            var el = document.querySelector(selector);
-            if (!el) {
-                return 'could not find element';
-            }
-
-            var ce = document.createEvent('MouseEvent');
-            ce.initMouseEvent(
-                'click',
-                true, // bubble
-                true, // cancelable
-                window,
-                null,
-                0, 0, 0, 0, // coordinates
-                false, false, false, false, // modifier keys
-                0, // left
-                null
-            );
-            el.dispatchEvent(ce);
-
-            return true;
-        }, selector);
-    } catch (error) {
-        console.log(error);
-        response = false;
-    }
-
-    if (response === true) {
-        console.log('Succeeded');
-        successCallback();
-        return;
-    } else {
-        console.log('Failed attempt: ' + response);
-    }
-
-    setTimeout(click.bind(this, selector, successCallback, failureCallback, delay, trials - 1), delay);
-}
-
-/**
- * 
- */
 function type(str, selector, submit, successCallback, failureCallback, delay, trials) {
     console.log('Typing in ' + selector);
     if (delay === undefined) {
@@ -223,7 +164,7 @@ function login(name, password, callback) {
 
 function login__showForm(name, password, callback) {
     setTimeout(function () {
-        click(
+        browserHelper.click(
             '#LOGIN > div',
             function () {
                 login__typeName(name, password, callback);
