@@ -15,7 +15,6 @@ module.exports = function (config) {
          */
         waitForElement: function waitForElement(selector, callback, delay, trials) {
             console.log('Looking for ' + selector);
-
             if (delay === undefined) {
                 delay = DEFAULT_DELAY;
             }
@@ -25,15 +24,23 @@ module.exports = function (config) {
             }
 
             if (trials <= 0) {
+                console.log('Failed');
                 callback(null);
                 return;
             }
-        
-            var element = page.evaluate(function (selector) {
-                return document.querySelector(selector);
-            }, selector);
+
+            var element;
+            try {
+                element = page.evaluate(function (selector) {
+                    return document.querySelector(selector);
+                }, selector);
+            } catch (error) {
+                console.log(error);
+                element = null;
+            }
         
             if (element) {
+                console.log('Succeeded');
                 callback(element);
             } else {
                 setTimeout(waitForElement.bind(this, selector, callback, delay, trials - 1), delay);
