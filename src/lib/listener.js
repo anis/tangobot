@@ -31,7 +31,10 @@ module.exports = function (config, page, helpers, requestHandlers) {
         // parse them all
         var parsedMessages = [];
         for (var i = 0; i < rawMessages.length; i += 1) {
-            parsedMessages.push(helpers.chatango.message.parse(rawMessages[i]));
+            var parsedMessage = helpers.chatango.message.parse(rawMessages[i]);
+            if (parsedMessage !== null) {
+                parsedMessages.push(parsedMessage);
+            }
         }
 
         return parsedMessages;
@@ -45,7 +48,12 @@ module.exports = function (config, page, helpers, requestHandlers) {
         if (messages.length > 0) {
             for (var handlerName in requestHandlers) {
                 if (requestHandlers.hasOwnProperty(handlerName)) {
-                    requestHandlers[handlerName].push(messages);
+                    try {
+                        requestHandlers[handlerName].push(messages);
+                    } catch (error) {
+                        console.log('Failed pushing messages to handler: ' + handlerName);
+                        console.log(error);
+                    }
                 }
             }
         }
