@@ -45,9 +45,17 @@ module.exports = function (config, page, helpers) {
                 'display',
                 'none',
                 '#LOGIN',
-                successCallback,
+                function () {
+                    login__setChannel(successCallback);
+                },
                 failureCallback
             );
+        }, 1000);
+    }
+
+    function login__setChannel(successCallback) {
+        setTimeout(function () {
+            helpers.chatango.account.setChannel('red', successCallback, successCallback);
         }, 1000);
     }
 

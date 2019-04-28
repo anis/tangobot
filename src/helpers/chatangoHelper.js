@@ -8,6 +8,11 @@ module.exports = function (config, page, helpers) {
     var helper = {};
 
     /**
+     * @see chatangoHelper.account.js
+     */
+    helper.account = require('./chatangoHelper.account')(config, page, helpers);
+
+    /**
      * @see chatangoHelper.login.js
      */
     helper.login = require('./chatangoHelper.login')(config, page, helpers);
