@@ -4,8 +4,18 @@
  * @property {string} password
  */
 
-module.exports = function (browserHelper) {
+module.exports = function (config, page, helpers) {
     var helper = {};
+
+    /**
+     * @see chatangoHelper.login.js
+     */
+    helper.login = require('./chatangoHelper.login')(config, page, helpers);
+
+    /**
+     * @see chatangoHelper.message.js
+     */
+    helper.message = require('./chatangoHelper.message')(config, page, helpers);
 
     /**
      * Opens a chatango group
@@ -28,7 +38,7 @@ module.exports = function (browserHelper) {
                 console.log('Succeeded');
             }
 
-            browserHelper.waitForElement(
+            helpers.browser.waitForElement(
                 '#group_table',
                 function () {
                     page.switchToFrame(1);
@@ -38,11 +48,6 @@ module.exports = function (browserHelper) {
             );
         });
     };
-
-    /**
-     * @see chatangoHelper.login.js
-     */
-    helper.login = require('./chatangoHelper.login')(browserHelper);
 
     /**
      * Opens a chatango group and logs in to it

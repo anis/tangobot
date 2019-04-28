@@ -1,4 +1,4 @@
-module.exports = function (config) {
+module.exports = function (config, page) {
     var DEFAULT_DELAY = config.browser.delayBeforeRetry;
     var DEFAULT_NUMBER_OF_TRIALS = config.browser.numberOfTrialsBeforeFailure;
 
@@ -338,4 +338,4 @@ module.exports = function (config) {
             setTimeout(type.bind(this, str, selector, submit, successCallback, failureCallback, delay, trials - 1), delay);
         }
     };
-}
+};

@@ -1,5 +1,6 @@
 module.exports = {
     bot: {
+        group: 'chatangoGroup',
         credentials: {
             username: 'botuser',
             password: 'botpassword'
@@ -9,5 +10,8 @@ module.exports = {
     browser: {
         delayBeforeRetry: 500, // in milliseconds
         numberOfTrialsBeforeFailure: 20
+    },
+    giphy: {
+        apiKey: 'mydeveloperkey'
     }
 };

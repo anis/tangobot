@@ -1,7 +1,7 @@
-module.exports = function (browserHelper) {
+module.exports = function (config, page, helpers) {
     function login__showForm(name, password, successCallback, failureCallback) {
         setTimeout(function () {
-            browserHelper.click(
+            helpers.browser.click(
                 '#LOGIN > div',
                 function () {
                     login__typeName(name, password, successCallback, failureCallback);
@@ -13,7 +13,7 @@ module.exports = function (browserHelper) {
 
     function login__typeName(name, password, successCallback, failureCallback) {
         setTimeout(function () {
-            browserHelper.type(
+            helpers.browser.type(
                 name,
                 '#full-username-input',
                 false,
@@ -27,7 +27,7 @@ module.exports = function (browserHelper) {
 
     function login__typePassword(password, successCallback, failureCallback) {
         setTimeout(function () {
-            browserHelper.type(
+            helpers.browser.type(
                 password,
                 '#full-password-input',
                 true,
@@ -41,7 +41,7 @@ module.exports = function (browserHelper) {
 
     function login__waitForResult(successCallback, failureCallback) {
         setTimeout(function () {
-            browserHelper.waitForStyle(
+            helpers.browser.waitForStyle(
                 'display',
                 'none',
                 '#LOGIN',
