@@ -34,6 +34,10 @@ module.exports = function (config, page, helpers, words) {
             var tones = response.document_tone.tones;
             var mainTone = null;
             for (var i = 0; i < tones.length; i += 1) {
+                if (['anger', 'fear', 'joy', 'sadness'].indexOf(tones[i].tone_id) === -1) {
+                    continue;
+                }
+
                 if (mainTone === null || tones[i].score > mainTone.score) {
                     mainTone = tones[i];
                 }
