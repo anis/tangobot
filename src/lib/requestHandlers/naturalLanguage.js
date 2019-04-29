@@ -109,8 +109,12 @@ module.exports = function (config, page, helpers, words) {
             case 'sadness':
                 getRandomDog(
                     function (imgSrc) {
-                        helpers.chatango.message.send('@' + username + ' tu m\'as l\'air d\'avoir besoin de réconfort, alors tiens :');
-                        helpers.chatango.message.send(imgSrc);
+                        helpers.chatango.message.send(
+                            '@' + username + ' tu m\'as l\'air d\'avoir besoin de réconfort, alors tiens :',
+                            function () {
+                                helpers.chatango.message.send(imgSrc);
+                            }
+                        );
                     },
                     function () {
                         helpers.chatango.message.send('@' + username + ' j\'ai pensé qu\'une image de chien mignon pourrait te réconforter, mais je n\'en ai pas trouvé :(');
