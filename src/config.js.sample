@@ -13,5 +13,11 @@ module.exports = {
     },
     giphy: {
         apiKey: 'mydeveloperkey'
+    },
+    ibm: {
+        toneAnalyzer: {
+            apiKey: 'myApiKey',
+            url: 'urlToTheApi'
+        }
     }
 };
