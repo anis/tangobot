@@ -31,10 +31,10 @@ module.exports = function (config, page, helpers, words) {
         xhr.onload = function () {
             var response = JSON.parse(this.response);
 
-            var tones = response.uterrances_tone[0].tones;
+            var tones = response.utterances_tone[0].tones;
             var mainTone = null;
             for (var i = 0; i < tones.length; i += 1) {
-                if (['anger', 'fear', 'joy', 'sadness'].indexOf(tones[i].tone_id) === -1) {
+                if (['impolite', 'satisfied', 'sad'].indexOf(tones[i].tone_id) === -1) {
                     continue;
                 }
 
@@ -111,13 +111,13 @@ module.exports = function (config, page, helpers, words) {
         }
 
         switch (tone.tone_id) {
-            case 'anger':
+            case 'impolite':
                 helpers.chatango.message.send(
                     '@' + username + ' va bien ' + getRandomVerb() + ' tes morts'
                 );
                 break;
 
-            case 'sadness':
+            case 'sad':
                 getRandomDog(
                     function (imgSrc) {
                         helpers.chatango.message.send(
