@@ -116,7 +116,9 @@ module.exports = function (config, page, helpers, words) {
                         helpers.chatango.message.send(
                             '@' + username + ' tu m\'as l\'air d\'avoir besoin de réconfort, alors tiens :',
                             function () {
-                                helpers.chatango.message.send(imgSrc);
+                                setTimeout(function () {
+                                    helpers.chatango.message.send(imgSrc);
+                                }, 500);
                             }
                         );
                     },
