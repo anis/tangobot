@@ -21,17 +21,17 @@ module.exports = function (config, page, helpers, words) {
     function getTone(message, successCallback) {
         var xhr = new XMLHttpRequest();
         xhr.open(
-            'GET',
-            config.ibm.toneAnalyzer.url + '/v3/tone?text=' + encodeURIComponent(message) + '&version=' + encodeURIComponent('2017-09-21'),
+            'POST',
+            config.ibm.toneAnalyzer.url + '/v3/tone_chat?version=' + encodeURIComponent('2017-09-21'),
             true
         );
         xhr.setRequestHeader('Authorization', 'Basic ' + btoa('apikey:' + config.ibm.toneAnalyzer.apiKey));
-        xhr.setRequestHeader('Content-Type', 'text/plain');
+        xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Content-Language', 'fr');
         xhr.onload = function () {
             var response = JSON.parse(this.response);
 
-            var tones = response.document_tone.tones;
+            var tones = response.uterrances_tone[0].tones;
             var mainTone = null;
             for (var i = 0; i < tones.length; i += 1) {
                 if (['anger', 'fear', 'joy', 'sadness'].indexOf(tones[i].tone_id) === -1) {
@@ -45,7 +45,14 @@ module.exports = function (config, page, helpers, words) {
 
             successCallback(mainTone);
         };
-        xhr.send();
+        xhr.send(JSON.stringify({
+            utterances: [
+                {
+                    text: message,
+                    user: 'customer'
+                }
+            ]
+        }));
     }
 
     /**
