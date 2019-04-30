@@ -56,20 +56,20 @@ module.exports = function (config, page, helpers, words) {
     }
 
     /**
-     * Gets a random picture of a dog
+     * Gets a random picture of a cat
      * 
      * @param {Function} successCallback
      * @param {Function} faolureCallback
      * 
      * @returns {undefined}
      */
-    function getRandomDog(successCallback, failureCallback) {
+    function getRandomCat(successCallback, failureCallback) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://dog.ceo/api/breeds/image/random', true);
+        xhr.open('GET', 'http://aws.random.cat/meow', true);
         xhr.onload = function () {
             try {
                 var response = JSON.parse(this.response);
-                successCallback(response.message);
+                successCallback(response.file);
             } catch (error) {
                 failureCallback();
             }
@@ -118,7 +118,7 @@ module.exports = function (config, page, helpers, words) {
                 break;
 
             case 'sad':
-                getRandomDog(
+                getRandomCat(
                     function (imgSrc) {
                         helpers.chatango.message.send(
                             '@' + username + ' tu m\'as l\'air d\'avoir besoin de réconfort, alors tiens :',
@@ -130,7 +130,7 @@ module.exports = function (config, page, helpers, words) {
                         );
                     },
                     function () {
-                        helpers.chatango.message.send('@' + username + ' j\'ai pensé qu\'une image de chien mignon pourrait te réconforter, mais je n\'en ai pas trouvé :(');
+                        helpers.chatango.message.send('@' + username + ' j\'ai pensé qu\'une image de chat mignon pourrait te réconforter, mais je n\'en ai pas trouvé :(');
                     }
                 )
                 break;
