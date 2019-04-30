@@ -30,7 +30,10 @@ module.exports = function (config, page, helpers) {
      * @param {string} username
      */
     function grat(username) {
-        helpers.chatango.message.send('@' + username + ' *grat*');
+        var now = new Date();
+        setTimeout(function () {
+            helpers.chatango.message.send('@' + username + ' *grat*');
+        }, Math.min(2, Math.round(Math.random() * (59 - now.getSeconds()))) * 1000);
     }
 
     return {
