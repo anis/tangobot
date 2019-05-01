@@ -89,7 +89,7 @@ module.exports = function (config, page, helpers) {
      * @param {Object} request
      */
     function schedule(request) {
-        var delay = Date.now() - request.ts;
+        var delay = request.ts - Date.now();
         if (delay <= 0) {
             return;
         }
@@ -112,7 +112,7 @@ module.exports = function (config, page, helpers) {
      * @returns {number|null} Null if the delay could not be parsed
      */
     function fromDelayToTimestamp(delay) {
-        var parts = delay.match(/^([0-9]+)(.+)$/);
+        var parts = delay.match(/^([0-9]+)\s*(.+)$/);
 
         var multiplier = 0;
         switch (parts[2]) {
@@ -236,6 +236,9 @@ module.exports = function (config, page, helpers) {
             var request = parseRequest(message.user, regs[i], match);
             if (request !== null) {
                 schedule(request);
+                helpers.chatango.message.send(
+                    '@' + message.user + ' ok ! :)'
+                );
             }
 
             break;
