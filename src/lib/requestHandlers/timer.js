@@ -7,6 +7,20 @@ module.exports = function (config, page, helpers) {
     }
 
     /**
+     * Minimum delay before timeout, in milliseconds
+     *
+     * @type {number}
+     */
+    var delayBeforeFiringTimeout = 24 * 60 * 60 * 1000;
+
+    /**
+     * List of fired timeouts
+     *
+     * @type {Array.<Object>}
+     */
+    var scheduledRequests = [];
+
+    /**
      * A map that converts first person to second person pronouns
      *
      * (And the other way around)
@@ -42,7 +56,7 @@ module.exports = function (config, page, helpers) {
 
     /**
      * List of verbs used for request detection
-     * 
+     *
      * @type {Array.<Object>}
      */
     var verbs = [
@@ -63,12 +77,12 @@ module.exports = function (config, page, helpers) {
 
     /**
      * List of regexps detecting a request
-     * 
+     *
      * "wording" is used to respond to the user when times comes
      * to remember him his request
-     * 
+     *
      * "reg" is, obviously, the regexp
-     * 
+     *
      * @type {Array.<Object>}
      */
     var regs = [
@@ -90,9 +104,9 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Saves the given request to the cache file
-     * 
+     *
      * @param {Object} request
-     * 
+     *
      * @returns {undefined}
      */
     function saveRequestToMemory(request) {
@@ -103,7 +117,7 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Removes outdated requests from the cache file
-     * 
+     *
      * @returns {undefined}
      */
     function cleanOutdatedRequests() {
@@ -120,23 +134,16 @@ module.exports = function (config, page, helpers) {
     }
 
     /**
-     * Schedules a request
-     * 
-     * @param {Object}  request
-     * @param {boolean} [saveToCache=true]
+     * Fires a request
+     *
+     * @param {Object} request
+     *
+     * @returns {undefined}
      */
-    function schedule(request, saveToCache) {
+    function fire(request) {
         var delay = request.ts - Date.now();
-        if (delay <= 0) {
-            return;
-        }
-
-        if (saveToCache !== false) {
-            saveRequestToMemory(request);
-        }
 
         setTimeout(function () {
-            cleanOutdatedRequests();
             helpers.chatango.message.send(
                 '@' + request.user + ' ' + request.str
             );
@@ -144,10 +151,55 @@ module.exports = function (config, page, helpers) {
     }
 
     /**
+     * Indicates if the request can be fired or not
+     *
+     * @param {Object} request
+     *
+     * @returns {boolean}
+     */
+    function canBeFired(request) {
+        // if the request is outdated, ignore it
+        var delay = request.ts - Date.now();
+        if (delay <= 0) {
+            return false;
+        }
+
+        // if the request has already been fired, ignore again
+        for (var i = 0; i < scheduledRequests.length; i += 1) {
+            if (scheduledRequests[i].user === request.user
+                && scheduledRequests[i].str === request.str
+                && scheduledRequests[i].ts === request.ts) {
+                    return false;
+                }
+        }
+
+        // if the request is way too much in the future, ignore ignore ignore
+        if (delay >= delayBeforeFiringTimeout) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Schedules a request
+     *
+     * @param {Object} request
+     */
+    function schedule(request) {
+        saveRequestToMemory(request);
+        cleanOutdatedRequests();
+
+        if (canBeFired(request)) {
+            fire(request);
+        }
+    }
+
+    /**
      * Parses the delay found in a request, and converts it to a value in milliseconds
-     * 
+     *
      * @param {string} delay Various formats, please see the regexp
-     * 
+     *
      * @returns {number|null} Null if the delay could not be parsed
      */
     function fromDelayToTimestamp(delay) {
@@ -210,11 +262,11 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Parses a request and formats it to a storable format
-     * 
+     *
      * @param {string} user  User that issued the request
      * @param {Object} reg   The reg that matched the request
      * @param {Array}  match The matched parts of the request
-     * 
+     *
      * @returns {Object}
      */
     function parseRequest(user, reg, match) {
@@ -232,9 +284,9 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Checks if the given message contains a valid timer request
-     * 
+     *
      * @param {ParsedMessage} message
-     * 
+     *
      * @returns {undefined}
      */
     function processMessage(message) {
@@ -256,16 +308,27 @@ module.exports = function (config, page, helpers) {
         }
     }
 
+    /**
+     * Fires all requests that were still pending
+     *
+     * @returns {undefined}
+     */
+    function firePendingRequests() {
+        var requests = JSON.parse(fs.read(config.dataSrc + '/timer.json'));
+        for (var i = 0; i < requests.length; i += 1) {
+            if (canBeFired(requests[i])) {
+                fire(requests[i]);
+            }
+        }
+    }
+
     return {
         init: function () {
-            // first of all, clean outdated requests
             cleanOutdatedRequests();
 
-            // then schedule to answer to remaining requests
-            var pendingRequests = JSON.parse(fs.read(config.dataSrc + '/timer.json'));
-            for (var i = 0; i < pendingRequests.length; i += 1) {
-                schedule(pendingRequests[i], false);
-            }
+            // fire pending requests every hour
+            firePendingRequests();
+            window.setInterval(firePendingRequests, 60 * 60 * 1000);
         },
         push: function process(messages) {
             for (var i = 0; i < messages.length; i += 1) {
