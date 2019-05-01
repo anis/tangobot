@@ -142,6 +142,7 @@ module.exports = function (config, page, helpers) {
      */
     function fire(request) {
         var delay = request.ts - Date.now();
+        scheduledRequests.push(request);
 
         setTimeout(function () {
             helpers.chatango.message.send(
