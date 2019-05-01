@@ -4,3 +4,5 @@ config.js
 logs/*
 !logs/.gitkeep
 .DS_Store
+data/*
+!data/words.js

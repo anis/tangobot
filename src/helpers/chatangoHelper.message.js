@@ -55,7 +55,7 @@ module.exports = function (config, page, helpers) {
                 return null;
             }
 
-            var requestParts = parts[2].match(/^\/([a-zA-Z]+)\s+(.+?)\s*$/);
+            var requestParts = parts[2].match(/^\/([a-zA-Z.]+)(?:\s+(.+?))?\s*$/);
             var request = null;
             if (requestParts !== null) {
                 request = {
