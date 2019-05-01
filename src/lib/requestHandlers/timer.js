@@ -122,15 +122,18 @@ module.exports = function (config, page, helpers) {
     /**
      * Schedules a request
      * 
-     * @param {Object} request
+     * @param {Object}  request
+     * @param {boolean} [saveToCache=true]
      */
-    function schedule(request) {
+    function schedule(request, saveToCache) {
         var delay = request.ts - Date.now();
         if (delay <= 0) {
             return;
         }
 
-        saveRequestToMemory(request);
+        if (saveToCache !== false) {
+            saveRequestToMemory(request);
+        }
 
         setTimeout(function () {
             cleanOutdatedRequests();
@@ -261,7 +264,7 @@ module.exports = function (config, page, helpers) {
             // then schedule to answer to remaining requests
             var pendingRequests = JSON.parse(fs.read(config.dataSrc + '/timer.json'));
             for (var i = 0; i < pendingRequests.length; i += 1) {
-                schedule(pendingRequests[i]);
+                schedule(pendingRequests[i], false);
             }
         },
         push: function process(messages) {
