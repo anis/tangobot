@@ -33,7 +33,7 @@ module.exports = function (config, page, helpers) {
         var now = new Date();
         setTimeout(function () {
             helpers.chatango.message.send('@' + username + ' *grat*');
-        }, Math.min(2, Math.round(Math.random() * (59 - now.getSeconds()))) * 1000);
+        }, Math.max(2, Math.round(Math.random() * (59 - now.getSeconds()))) * 1000);
     }
 
     return {

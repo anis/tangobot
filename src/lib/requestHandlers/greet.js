@@ -2,7 +2,8 @@ module.exports = function (config, page, helpers) {
     var greetWords = [
         'bonjour', 'bonsoir', 'salut', 'plop', 'yo',
         'hello', 'coucou', 'hey', 'kikou', 'wesh',
-        'bonsoir'
+        'bonsoir', 'blop', 'yop', 'salutation',
+        'salutations'
     ];
 
     var startTime = Date.now();
@@ -21,13 +22,19 @@ module.exports = function (config, page, helpers) {
         return greetWords[Math.round(Math.random() * (greetWords.length - 1))];
     }
 
+    function greet(user) {
+        setTimeout(function () {
+            helpers.chatango.message.send('@' + user + ' ' + randomGreetWord() + ' !');
+        }, (Math.round(Math.random() * 3) + 2) * 1000);
+    }
+
     return {
         push: function process(messages) {
 
             for (var i = 0; i < messages.length; i += 1) {
                 if ((Date.now() - startTime) >= silenceDelay) {
                     if (isGreeting(messages[i].message) && isNewlyActive(messages[i].user)) {
-                        helpers.chatango.message.send('@' + messages[i].user + ' ' + randomGreetWord() + ' !');
+                        greet(messages[i].user);
                     }
                 }
 
