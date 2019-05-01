@@ -7,6 +7,40 @@ module.exports = function (config, page, helpers) {
     }
 
     /**
+     * A map that converts first person to second person pronouns
+     *
+     * (And the other way around)
+     *
+     * @type {Object.<string,string>}
+     */
+    var pronounTable = {
+        'je': 'tu',
+        'me': 'te',
+        'm\'': 't\'',
+        'm': 't',
+        'moi': 'toi',
+        'nous': 'vous',
+        'mien': 'tien',
+        'mienne': 'tienne',
+        'miens': 'tiens',
+        'miennes': 'tiennes',
+        'nôtre': 'vôtre',
+        'notre': 'votre',
+        'nôtres': 'vôtres',
+        'notres': 'votres',
+        'mon': 'ton',
+        'ma': 'ta',
+        'mes': 'tes',
+        'nos': 'vos',
+    };
+
+    for (var v in pronounTable) {
+        if (pronounTable.hasOwnProperty(v)) {
+            pronounTable[pronounTable[v]] = v;
+        }
+    }
+
+    /**
      * List of verbs used for request detection
      * 
      * @type {Array.<Object>}
@@ -41,13 +75,13 @@ module.exports = function (config, page, helpers) {
         {
             wording: 'je devais te',
             reg: new RegExp(
-                '^(?:est[\\s-]ce\\s+que\\s+)?tu\\s+peux\\s+me\\s+(' + infinitives.join('|') + ')\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
+                '^@' + config.bot.credentials.username + '\\s+(?:est[\\s-]ce\\s+que\\s+)?tu\\s+(?:peux|pourrais?|pourras|veux\\s+bien|voudrais?\\s+bien|accepte\\s*de)\\s+me\\s+(' + infinitives.join('|') + ')\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
             )
         },
         {
             wording: 'il fallait que je te',
             reg: new RegExp(
-                '^(' + imperatives.join('|') + ')\\s+moi\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
+                '^@' + config.bot.credentials.username + '\\s+(' + imperatives.join('|') + ')\\s+moi\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
             )
         }
     ];
@@ -155,42 +189,14 @@ module.exports = function (config, page, helpers) {
      * @returns {string}
      */
     function convertFirstPerson(str) {
-        var table = {
-            'je': 'tu',
-            'me': 'te',
-            'm\'': 't\'',
-            'm': 't',
-            'moi': 'toi',
-            'nous': 'vous',
-            'mien': 'tien',
-            'mienne': 'tienne',
-            'miens': 'tiens',
-            'miennes': 'tiennes',
-            'nôtre': 'vôtre',
-            'notre': 'votre',
-            'nôtres': 'vôtres',
-            'notres': 'votres',
-            'mon': 'ton',
-            'ma': 'ta',
-            'mes': 'tes',
-            'nos': 'vos',
-        };
-        var firstPerson = Object.keys(table);
-        var secondPerson = Object.values(table);
-
         var parts = str.split(' ');
         var converted = [];
         for (var i = 0; i < parts.length; i += 1) {
             var part = parts[i].toLowerCase();
-            if (table.hasOwnProperty(part)) {
-                converted.push(table[part]);
+            if (pronounTable.hasOwnProperty(part)) {
+                converted.push(pronounTable[part]);
             } else {
-                var index = secondPerson.indexOf(part);
-                if (index >= 0) {
-                    converted.push(firstPerson[index]);
-                } else {
-                    converted.push(parts[i]);
-                }
+                converted.push(parts[i]);
             }
         }
 
