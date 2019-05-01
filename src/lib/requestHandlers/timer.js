@@ -75,13 +75,15 @@ module.exports = function (config, page, helpers) {
         {
             wording: 'je devais te',
             reg: new RegExp(
-                '^@' + config.bot.credentials.username + '\\s+(?:est[\\s-]ce\\s+que\\s+)?tu\\s+(?:peux|pourrais?|pourras|veux\\s+bien|voudrais?\\s+bien|accepte\\s*de)\\s+me\\s+(' + infinitives.join('|') + ')\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
+                '^@' + config.bot.credentials.username + '\\s+(?:est[\\s-]ce\\s+que\\s+)?tu\\s+(?:peux|pourrais?|pourras|veux\\s+bien|voudrais?\\s+bien|accepte\\s*de)\\s+me\\s+(' + infinitives.join('|') + ')\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))',
+                'i'
             )
         },
         {
             wording: 'il fallait que je te',
             reg: new RegExp(
-                '^@' + config.bot.credentials.username + '\\s+(' + imperatives.join('|') + ')\\s+moi\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))'
+                '^@' + config.bot.credentials.username + '\\s+(' + imperatives.join('|') + ')\\s+moi\\s+(pour|de|d[\\s\'])\\s*(.+)\\s*dans\\s+([0-9]+\\s*(?:h|heures?|ms?|mns?|mins?|minutes?|js?|jours?))',
+                'i'
             )
         }
     ];
