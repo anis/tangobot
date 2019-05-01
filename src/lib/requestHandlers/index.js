@@ -6,6 +6,7 @@ module.exports = function (config, page, helpers, words) {
     handlers.greet = require('./greet')(config, page, helpers);
     handlers.imitate = require('./imitate')(config, page, helpers);
     handlers.naturalLanguage = require('./naturalLanguage')(config, page, helpers, words);
+    handlers.timer = require('./timer')(config, page, helpers);
 
     return handlers;
 };
