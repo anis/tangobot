@@ -61,6 +61,26 @@ module.exports = function (config, page, helpers, requestHandlers) {
         window.requestAnimationFrame(processPendingMessages);
     }
 
+    /**
+     * Initializes all request handlers
+     * 
+     * @returns {undefined}
+     */
+    function initHandlers() {
+        for (var handlerName in requestHandlers) {
+            if (requestHandlers.hasOwnProperty(handlerName)) {
+                try {
+                    if (requestHandlers[handlerName].init) {
+                        requestHandlers[handlerName].init();
+                    }
+                } catch (error) {
+                    console.log('Failed initializing handler: ' + handlerName);
+                    console.log(error);
+                }
+            }
+        }
+    }
+
     // open the chat group and start listening to requests
     helpers.chatango.openAs(
         page,
@@ -68,6 +88,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
         config.bot.credentials,
         function () {
             getPendingMessages(); // clear initial messages
+            initHandlers();
             window.requestAnimationFrame(processPendingMessages);
         },
         function () {
