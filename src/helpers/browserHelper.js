@@ -301,7 +301,7 @@ module.exports = function (config, page) {
                         el.value = str;
                         el.focus();
                     } else {
-                        el.innerHTML = str;
+                        el.innerHTML = str.replace("\n", '<br/>');
                     }
 
                     if (submit === true) {
