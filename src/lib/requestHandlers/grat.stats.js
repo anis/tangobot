@@ -27,6 +27,18 @@ module.exports = function (config, page, helpers) {
 
     return {
         push: function process(messages) {
+            var leaderboardWasAsked = false;
+            for (var i = 0; i < messages.length; i += 1) {
+                if (messages[i].request !== null && messages[i].request.type === 'grat.stats') {
+                    leaderboardWasAsked = true;
+                    break;
+                }
+            }
+
+            if (!leaderboardWasAsked) {
+                return;
+            }
+
             var stats = JSON.parse(fs.read(config.dataSrc + '/grat.stats.json')) || {};
             var ordered = [];
             for (var username in stats) {
