@@ -148,6 +148,56 @@ module.exports = function (config, page, helpers) {
     }
 
     /**
+     * Converts first person pronouns to second person
+     *
+     * @param {string} str
+     *
+     * @returns {string}
+     */
+    function convertFirstPerson(str) {
+        var table = {
+            'je': 'tu',
+            'me': 'te',
+            'm\'': 't\'',
+            'm': 't',
+            'moi': 'toi',
+            'nous': 'vous',
+            'mien': 'tien',
+            'mienne': 'tienne',
+            'miens': 'tiens',
+            'miennes': 'tiennes',
+            'nôtre': 'vôtre',
+            'notre': 'votre',
+            'nôtres': 'vôtres',
+            'notres': 'votres',
+            'mon': 'ton',
+            'ma': 'ta',
+            'mes': 'tes',
+            'nos': 'vos',
+        };
+        var firstPerson = Object.keys(table);
+        var secondPerson = Object.values(table);
+
+        var parts = str.split(' ');
+        var converted = [];
+        for (var i = 0; i < parts.length; i += 1) {
+            var part = parts[i].toLowerCase();
+            if (table.hasOwnProperty(part)) {
+                converted.push(table[part]);
+            } else {
+                var index = secondPerson.indexOf(part);
+                if (index >= 0) {
+                    converted.push(firstPerson[index]);
+                } else {
+                    converted.push(parts[i]);
+                }
+            }
+        }
+
+        return converted.join(' ');
+    }
+
+    /**
      * Parses a request and formats it to a storable format
      * 
      * @param {string} user  User that issued the request
@@ -164,7 +214,7 @@ module.exports = function (config, page, helpers) {
 
         return {
             user: user,
-            str: reg.wording + ' ' + match[1] + ' ' + match[2] + ' ' + match[3],
+            str: reg.wording + ' ' + match[1] + ' ' + match[2] + ' ' + convertFirstPerson(match[3]),
             ts: Date.now() + delay
         };
     }
