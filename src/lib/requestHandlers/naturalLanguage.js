@@ -12,10 +12,10 @@ module.exports = function (config, page, helpers, words) {
 
     /**
      * Analyzes the given message and responds with the main tone detected
-     * 
+     *
      * @param {string}   message
      * @param {Function} successCallback
-     * 
+     *
      * @returns {undefined}
      */
     function getTone(message, successCallback) {
@@ -57,10 +57,10 @@ module.exports = function (config, page, helpers, words) {
 
     /**
      * Gets a random picture of a cat
-     * 
+     *
      * @param {Function} successCallback
      * @param {Function} faolureCallback
-     * 
+     *
      * @returns {undefined}
      */
     function getRandomCat(successCallback, failureCallback) {
@@ -87,8 +87,55 @@ module.exports = function (config, page, helpers, words) {
     }
 
     /**
+     * Gets a random picture of a dog
+     *
+     * @param {Function} successCallback
+     * @param {Function} faolureCallback
+     *
+     * @returns {undefined}
+     */
+    function getRandomDog(successCallback, failureCallback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://dog.ceo/api/breeds/image/random', true);
+        xhr.onload = function () {
+            try {
+                var response = JSON.parse(this.response);
+                successCallback(response.message);
+            } catch (error) {
+                failureCallback();
+            }
+        };
+        xhr.onerror = function () {
+            failureCallback();
+        };
+        xhr.ontimeout = function () {
+            failureCallback();
+        };
+        xhr.onabort = function () {
+            failureCallback();
+        };
+        xhr.send();
+    }
+
+    /**
+     * Gets a random picture of a cute animal
+     *
+     * @param {Function} successCallback
+     * @param {Function} faolureCallback
+     *
+     * @returns {undefined}
+     */
+    function getRandomAnimal(successCallback, failureCallback) {
+        var animals = [getRandomCat, getRandomDog];
+        animals[Math.round(Math.random() * (animals.length - 1))](
+            successCallback,
+            failureCallback
+        );
+    }
+
+    /**
      * Gets a random verb from the word database
-     * 
+     *
      * @returns {string}
      */
     function getRandomVerb() {
@@ -97,7 +144,7 @@ module.exports = function (config, page, helpers, words) {
 
     /**
      * Responds to a user, based on his  tone
-     * 
+     *
      * @param {string}      username
      * @param {Object|null} tone
      */
@@ -118,7 +165,7 @@ module.exports = function (config, page, helpers, words) {
                 break;
 
             case 'sad':
-                getRandomCat(
+                getRandomAnimal(
                     function (imgSrc) {
                         helpers.chatango.message.send(
                             '@' + username + ' tu m\'as l\'air d\'avoir besoin de réconfort, alors tiens :',
@@ -130,7 +177,7 @@ module.exports = function (config, page, helpers, words) {
                         );
                     },
                     function () {
-                        helpers.chatango.message.send('@' + username + ' j\'ai pensé qu\'une image de chat mignon pourrait te réconforter, mais je n\'en ai pas trouvé :(');
+                        helpers.chatango.message.send('@' + username + ' j\'ai pensé qu\'une image d\'animal mignon pourrait te réconforter, mais je n\'en ai pas trouvé :(');
                     }
                 )
                 break;
