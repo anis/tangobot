@@ -60,7 +60,7 @@ module.exports = function (config, page, helpers) {
             if (requestParts !== null) {
                 request = {
                     type: requestParts[1],
-                    args: requestParts[2].replace(/\s+/g, ' ').split(' ')
+                    args: requestParts[2] ? requestParts[2].replace(/\s+/g, ' ').split(' ') : []
                 };
             }
 
