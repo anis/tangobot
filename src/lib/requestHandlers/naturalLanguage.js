@@ -203,10 +203,16 @@ module.exports = function (config, page, helpers, words) {
             // analyze the tone of each DM and respond accordingly
             for (var user in dms) {
                 if (dms.hasOwnProperty(user)) {
-                    getTone(
-                        dms[user].message,
-                        reactToDm.bind(this, user)
-                    );
+                    if (dms[user].message.toLowerCase() === 'merde') {
+                        helpers.chatango.message.send(
+                            '@' + user + ' bon, tu commences à me faire CHIER avec ta merde'
+                        );
+                    } else {
+                        getTone(
+                            dms[user].message,
+                            reactToDm.bind(this, user)
+                        );
+                    }
                 }
             }
         }
