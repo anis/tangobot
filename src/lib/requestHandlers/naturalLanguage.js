@@ -203,11 +203,11 @@ module.exports = function (config, page, helpers, words) {
             // analyze the tone of each DM and respond accordingly
             for (var user in dms) {
                 if (dms.hasOwnProperty(user)) {
-                    if (dms[user].message.toLowerCase() === 'merde') {
+                    if (dms[user].message.toLowerCase() === '@' + config.bot.credentials.username + ' merde') {
                         helpers.chatango.message.send(
                             '@' + user + ' bon, tu commences à me faire CHIER avec ta merde'
                         );
-                    } else {
+                    } else if (dms[user].message.split(' ').length >= 4) {
                         getTone(
                             dms[user].message,
                             reactToDm.bind(this, user)
