@@ -1,4 +1,30 @@
+var fs = require('fs');
+
 module.exports = function (config, page, helpers) {
+    // stats
+    if (!fs.exists(config.dataSrc + '/grat.stats.json')) {
+        fs.write(config.dataSrc + '/grat.stats.json', '{}', 'w');
+    }
+
+    /**
+     * List of grats received by each user, grouped by hours
+     *
+     * Example:
+     * {
+     *  username: {
+     *      '11h11': 2,
+     *      '22h22': 1,
+     *      ...
+     *  },
+     *  ...
+     * }
+     *
+     * @type {Object}
+     */
+    var stats = JSON.parse(
+        fs.read(config.dataSrc + '/grat.stats.json')
+    ) || {};
+
     /**
      * Checks if the given message is an "hour message"
      * 
@@ -51,8 +77,10 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Sends the message '*grat*' to a user
-     * 
+     *
      * @param {string} username
+     *
+     * @returns {undefined}
      */
     function grat(username) {
         var now = new Date();
@@ -61,13 +89,36 @@ module.exports = function (config, page, helpers) {
         }, Math.max(2, Math.round(Math.random() * (59 - now.getSeconds()))) * 1000);
     }
 
+    /**
+     * Increments the score of the given user of 1 for the given hour
+     *
+     * @param {string} username
+     * @param {string} hour
+     *
+     * @returns {undefined}
+     */
+    function saveToStats(username, hour) {
+        if (!stats[username]) {
+            stats[username] = {};
+        }
+
+        if (!stats[username][hour]) {
+            stats[username][hour] = 0;
+        }
+
+        stats[username][hour] += 1;
+        fs.write(config.dataSrc + '/grat.stats.json', JSON.stringify(stats), 'w');
+    }
+
     return {
         push: function process(messages) {
             for (var i = 0; i < messages.length; i += 1) {
                 if (isHourMessage(messages[i].message)
                     && isMessageMatchingRealHour(messages[i].message)
                     && isHourSpecial(messages[i].message)) {
+                    saveToStats(messages[i].user, messages[i].message);
                     grat(messages[i].user);
+                    return;
                 }
             }
         }

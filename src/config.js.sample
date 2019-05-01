@@ -1,4 +1,5 @@
 module.exports = {
+    dataSrc: './data',
     bot: {
         group: 'chatangoGroup',
         credentials: {
