@@ -55,11 +55,11 @@ module.exports = function (config, page, helpers) {
                 return null;
             }
 
-            var requestParts = parts[2].match(/^\/([a-zA-Z.]+)(?:\s+(.+?))?\s*$/);
+            var requestParts = parts[2].match(/^\/([a-zA-Z.]+)(?:\s+(.+?))?\s*$/i);
             var request = null;
             if (requestParts !== null) {
                 request = {
-                    type: requestParts[1],
+                    type: requestParts[1].toLowerCase(),
                     args: requestParts[2] ? requestParts[2].replace(/\s+/g, ' ').split(' ') : []
                 };
             }
