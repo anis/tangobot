@@ -111,7 +111,7 @@ module.exports = function (config, page, helpers) {
         var now = Date.now();
         var validRequests = [];
         for (var i = 0; i < requests.length; i += 1) {
-            if (now - requests[i].ts > 0) {
+            if (requests[i].ts - now > 0) {
                 validRequests.push(requests[i]);
             }
         }
