@@ -26,10 +26,17 @@ module.exports = function (config, page, helpers) {
     ) || {};
 
     /**
+     * Locked hours
+     *
+     * @type {Object.<string,boolean>}
+     */
+    var locked = {};
+
+    /**
      * Checks if the given message is an "hour message"
-     * 
+     *
      * @param {string} message
-     * 
+     *
      * @returns {boolean}
      */
     function isHourMessage(message) {
@@ -47,9 +54,9 @@ module.exports = function (config, page, helpers) {
 
     /**
      * Checks if the given "hour message" matches the current time
-     * 
+     *
      * @param {string} hour
-     * 
+     *
      * @returns {boolean}
      */
     function isMessageMatchingRealHour(hour) {
@@ -110,15 +117,41 @@ module.exports = function (config, page, helpers) {
         fs.write(config.dataSrc + '/grat.stats.json', JSON.stringify(stats), 'w');
     }
 
+    /**
+     * Locks the given hour
+     *
+     * @param {string} hour
+     *
+     * @returns {undefined}
+     */
+    function lock(hour) {
+        locked[hour.toLowerCase()] = true;
+        setTimeout(function () {
+            locked[hour.toLowerCase()] = undefined;
+        }, 60 * 1000);
+    }
+
+    /**
+     * Checks if the given hour is locked or not
+     *
+     * @param {string} hour
+     *
+     * @returns {boolean}
+     */
+    function isLocked(hour) {
+        return locked[hour.toLowerCase()] === true;
+    }
+
     return {
         push: function process(messages) {
             for (var i = 0; i < messages.length; i += 1) {
                 if (isHourMessage(messages[i].message)
                     && isMessageMatchingRealHour(messages[i].message)
-                    && isHourSpecial(messages[i].message)) {
+                    && isHourSpecial(messages[i].message)
+                    && !isLocked(messages[i].message)) {
                     saveToStats(messages[i].user, messages[i].message);
                     grat(messages[i].user);
-                    return;
+                    lock(messages[i].message);
                 }
             }
         }
