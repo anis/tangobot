@@ -118,6 +118,10 @@ module.exports = function (config, page, helpers) {
             return;
         }
 
+        if (message.user === config.bot.credentials.username) {
+            return;
+        }
+
         if (alreadyImitated(dm)) {
             return;
         }
