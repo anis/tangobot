@@ -68,18 +68,21 @@ module.exports = function (config, page, helpers) {
     /**
      * Checks if the given hour deserves a grat
      *
+     * Accepted hours:
+     * 00h00
+     * 11h11
+     * 22h22
+     * 12h34
+     *
      * @param {string} hour
      *
      * @returns {boolean}
      */
     function isHourSpecial(hour) {
         var expected = hour.split('h');
-        return expected[0] === reverse(expected[1])
-            || expected[0] === expected[1]
-            || (expected[0] === '01' && expected[1] === '23')
-            || (expected[0] === '12' && expected[1] === '34')
-            || (expected[0] === '23' && expected[1] === '45')
-            || (expected[0] === '13' && expected[1] === '37');
+        return (expected[0] === expected[1]
+                && (expected[0] === 0 || expected[0] === 11 || expected[0] === 22))
+            || (expected[0] === '12' && expected[1] === '34');
     }
 
     /**
