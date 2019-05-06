@@ -43,15 +43,6 @@ module.exports = function (config, page, helpers) {
         return message.match(/^[0-9]{2}h[0-9]{2}$/g) !== null;
     }
 
-    function reverse(str) {
-        var reversed = '';
-        for (var i = str.length - 1; i >= 0; i -= 1) {
-            reversed += str[i];
-        }
-
-        return reversed;
-    }
-
     /**
      * Checks if the given "hour message" matches the current time
      *
@@ -80,9 +71,11 @@ module.exports = function (config, page, helpers) {
      */
     function isHourSpecial(hour) {
         var expected = hour.split('h');
-        return (expected[0] === expected[1]
-                && (expected[0] === 0 || expected[0] === 11 || expected[0] === 22))
-            || (expected[0] === '12' && expected[1] === '34');
+        var hours = parseInt(expected[0], 10);
+        var minutes = parseInt(expected[1], 10);
+        return (hours === minutes
+                && (hours === 0 || hours === 11 || hours === 22))
+            || (hours === '12' && minutes === '34');
     }
 
     /**
