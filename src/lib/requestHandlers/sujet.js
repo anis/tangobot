@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = function (config, page, helpers) {
     // local memory
     if (!fs.exists(config.dataSrc + '/sujet.json')) {
