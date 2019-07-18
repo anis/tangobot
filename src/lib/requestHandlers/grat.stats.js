@@ -63,7 +63,12 @@ module.exports = function (config, page, helpers) {
             var leaderboard = " \n \n _____\n";
             var lines = [];
             for (var i = 0; i < ordered.length; i += 1) {
-                lines.push((i + 1) + '. ' + ordered[i].map(({ user }) => user).join(', ') + ' avec ' + ordered[i][0].total + ' gratouille' + (ordered[i][0].total > 1 ? 's' : ''));
+                var users = [];
+                for (var j = 0; j < ordered[i].length; j += 1) {
+                    users.push(ordered[i][j].user);
+                }
+
+                lines.push((i + 1) + '. ' + users.join(', ') + ' avec ' + ordered[i][0].total + ' gratouille' + (ordered[i][0].total > 1 ? 's' : ''));
             }
 
             helpers.chatango.message.send(leaderboard + lines.join("\n"));
