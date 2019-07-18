@@ -3,16 +3,18 @@ var fs = require('fs');
 module.exports = function (config, page, helpers) {
     function insert(list, userStats) {
         var i = 0;
-        while (i < list.length && list[i].total > userStats.total) {
+        while (i < list.length && list[i][0].total > userStats.total) {
             i += 1;
         }
 
         if (i >= list.length) {
-            return list.push([ userStats ]);
+            list.push([ userStats ]);
+            return list;
         }
 
         if (list[i][0].total === userStats.total) {
-            returnlist[i].push(userStats);
+            list[i].push(userStats);
+            return list;
         }
 
         return list.slice(0,i).concat([[userStats]]).concat(list.slice(i));
