@@ -1,5 +1,5 @@
 module.exports = function (config, page, helpers, words) {
-    var reg = new RegExp('^@' + config.bot.credentials.username);
+    var reg = new RegExp('^@' + config.bot.credentials.username + '\\s+(.+)$');
 
     console.log('Filtering words to keep verbs only');
     var verbs = [];
@@ -90,7 +90,7 @@ module.exports = function (config, page, helpers, words) {
      * Gets a random picture of a dog
      *
      * @param {Function} successCallback
-     * @param {Function} faolureCallback
+     * @param {Function} failureCallback
      *
      * @returns {undefined}
      */
@@ -193,25 +193,36 @@ module.exports = function (config, page, helpers, words) {
                     continue;
                 }
 
-                if (reg.test(messages[i].message) !== true) {
+                var match = messages[i].message.match(reg);
+                if (match === null) {
                     continue;
                 }
 
-                dms[messages[i].user] = messages[i];
+                dms[messages[i].user] = match[1].replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
             }
 
             // analyze the tone of each DM and respond accordingly
             for (var user in dms) {
                 if (dms.hasOwnProperty(user)) {
-                    if (dms[user].message.toLowerCase() === '@' + config.bot.credentials.username + ' merde') {
-                        helpers.chatango.message.send(
-                            '@' + user + ' bon, tu commences à me faire CHIER avec ta merde'
-                        );
-                    } else if (dms[user].message.split(' ').length >= 4) {
-                        getTone(
-                            dms[user].message,
-                            reactToDm.bind(this, user)
-                        );
+                    switch (dms[user].toLowerCase()) {
+                        case '**grat**':
+                        case '*grat*':
+                        case 'grat':
+                            helpers.chatango.message.send('ron');
+                            break;
+
+                        case 'merci':
+                            helpers.chatango.message.send('@' + user + ' de rien !');
+                            break;
+
+                        default:
+                            if (dms[user].split(' ').length >= 4) {
+                                getTone(
+                                    dms[user],
+                                    reactToDm.bind(this, user)
+                                );
+                            }
+                            break;
                     }
                 }
             }
