@@ -10,7 +10,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
             var elements = document.querySelectorAll(
                 '#OM > .msg > .msg-fg:not(.clear)'
             );
-    
+
             var i = 0;
             var messages = [];
             for (var i = 0; i < elements.length; i += 1) {
@@ -24,7 +24,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
                     messages.push(messageContainer.textContent);
                 }
             }
-    
+
             return messages;
         });
 
@@ -44,6 +44,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
      * 
      */
     function processPendingMessages() {
+        //
         var messages = getPendingMessages();
         if (messages.length > 0) {
             for (var handlerName in requestHandlers) {
@@ -57,8 +58,28 @@ module.exports = function (config, page, helpers, requestHandlers) {
                 }
             }
         }
-    
-        window.requestAnimationFrame(processPendingMessages);
+
+        // check if connection was lost
+        var response;
+        try {
+            response = page.evaluate(function () {
+                var el = document.querySelector('#CUI');
+                if (!el) {
+                    return 'could not find element';
+                }
+
+                return el.textContent.indexOf('Impossible de se connecter') >= 0;
+            });
+        } catch (error) {
+            console.log('Failed checking connection state', error);
+            response = false;
+        }
+
+        if (response === true) {
+            restart();
+        } else {
+            window.requestAnimationFrame(processPendingMessages);
+        }
     }
 
     /**
@@ -82,17 +103,26 @@ module.exports = function (config, page, helpers, requestHandlers) {
     }
 
     // open the chat group and start listening to requests
-    helpers.chatango.openAs(
-        page,
-        config.bot.group,
-        config.bot.credentials,
-        function () {
-            getPendingMessages(); // clear initial messages
-            initHandlers();
-            window.requestAnimationFrame(processPendingMessages);
-        },
-        function () {
-            phantom.exit();
-        }
-    );
+    function start() {
+        helpers.chatango.openAs(
+            page,
+            config.bot.group,
+            config.bot.credentials,
+            function () {
+                getPendingMessages(); // clear initial messages
+                initHandlers();
+                window.requestAnimationFrame(processPendingMessages);
+            },
+            function () {
+                phantom.exit();
+            }
+        );
+    }
+
+    function restart() {
+        page.close();
+        setTimeout(start, 10000);
+    }
+
+    start();
 };
