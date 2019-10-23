@@ -113,9 +113,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
                 initHandlers();
                 window.requestAnimationFrame(processPendingMessages);
             },
-            function () {
-                phantom.exit();
-            }
+            restart,
         );
     }
 
