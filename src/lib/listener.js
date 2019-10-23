@@ -113,7 +113,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
                 initHandlers();
                 window.requestAnimationFrame(processPendingMessages);
             },
-            restart,
+            restart
         );
     }
 
