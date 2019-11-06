@@ -44,8 +44,16 @@ module.exports = function (config, page, helpers, requestHandlers) {
      * 
      */
     function processPendingMessages() {
-        //
-        var messages = getPendingMessages();
+        var messages;
+        try {
+            messages = getPendingMessages();
+        } catch (error) {
+            console.log('Failed retrieving pending messages');
+            console.log('Asking for a restart');
+            restart();
+            return;
+        }
+
         if (messages.length > 0) {
             for (var handlerName in requestHandlers) {
                 if (requestHandlers.hasOwnProperty(handlerName)) {
@@ -60,7 +68,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
         }
 
         // check if connection was lost
-        var response;
+        var response = undefined;
         try {
             response = page.evaluate(function () {
                 var el = document.querySelector('#CUI');
@@ -72,10 +80,12 @@ module.exports = function (config, page, helpers, requestHandlers) {
             });
         } catch (error) {
             console.log('Failed checking connection state', error);
-            response = false;
+            response = undefined;
         }
 
-        if (response === true) {
+        if (response !== false) {
+            console.log('Disconnected');
+            console.log('Asking for a restart');
             restart();
         } else {
             window.requestAnimationFrame(processPendingMessages);
@@ -118,6 +128,7 @@ module.exports = function (config, page, helpers, requestHandlers) {
     }
 
     function restart() {
+        console.log('Restarting the page');
         page.close();
         setTimeout(start, 10000);
     }
